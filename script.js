@@ -188,20 +188,23 @@
   var coarse = window.matchMedia("(pointer: coarse)").matches;
 
   var el = document.getElementById("hit-counter");
-  if (el && window.fetch) {
-    var api = "https://abacus.jasoncameron.dev/";
-    var key = "nyxdarkgg-github-io/visits";
-    var counted = false;
-    try { counted = sessionStorage.getItem("nyx-counted") === "1"; } catch (err) {}
-    fetch(api + (counted ? "get/" : "hit/") + key)
-      .then(function (r) { return r.json(); })
-      .then(function (d) {
+  if (el) {
+    var pad = function (n) { return String(n).padStart(7, "0"); };
+    try {
+      var last = localStorage.getItem("nyx-hits-last");
+      if (last) el.textContent = pad(last);
+    } catch (err) {}
+    if (window.__nyxHits) {
+      window.__nyxHits.then(function (d) {
         if (typeof d.value === "number") {
-          el.textContent = String(d.value).padStart(7, "0");
-          try { sessionStorage.setItem("nyx-counted", "1"); } catch (err) {}
+          el.textContent = pad(d.value);
+          try {
+            sessionStorage.setItem("nyx-counted", "1");
+            localStorage.setItem("nyx-hits-last", String(d.value));
+          } catch (err) {}
         }
-      })
-      .catch(function () {});
+      }).catch(function () {});
+    }
   }
 
   if (reduced || coarse) return;
