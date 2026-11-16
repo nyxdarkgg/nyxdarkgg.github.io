@@ -188,18 +188,7 @@
   var coarse = window.matchMedia("(pointer: coarse)").matches;
 
   var el = document.getElementById("hit-counter");
-  if (el) {
-    var base = 2006;
-    var extra = 0;
-    try {
-      extra = parseInt(localStorage.getItem("nyx-hits") || "0", 10) || 0;
-      extra += 1;
-      localStorage.setItem("nyx-hits", String(extra));
-    } catch (err) {
-      extra = 1;
-    }
-    el.textContent = String(base + extra).padStart(7, "0");
-  }
+  if (el) el.textContent = "0001337";
 
   if (reduced || coarse) return;
 
