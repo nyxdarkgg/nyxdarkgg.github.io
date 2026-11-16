@@ -188,7 +188,21 @@
   var coarse = window.matchMedia("(pointer: coarse)").matches;
 
   var el = document.getElementById("hit-counter");
-  if (el) el.textContent = "0001337";
+  if (el && window.fetch) {
+    var api = "https://abacus.jasoncameron.dev/";
+    var key = "nyxdarkgg-github-io/visits";
+    var counted = false;
+    try { counted = sessionStorage.getItem("nyx-counted") === "1"; } catch (err) {}
+    fetch(api + (counted ? "get/" : "hit/") + key)
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (typeof d.value === "number") {
+          el.textContent = String(d.value).padStart(7, "0");
+          try { sessionStorage.setItem("nyx-counted", "1"); } catch (err) {}
+        }
+      })
+      .catch(function () {});
+  }
 
   if (reduced || coarse) return;
 
